@@ -10,7 +10,6 @@ import AudioToolbox
 import Foundation
 
 public final class MidiData {
-    
     private let sequence: MidiSequence
     public private(set) var tempoTrack: MidiTempoTrack
     public private(set) var noteTracks: [MidiNoteTrack]

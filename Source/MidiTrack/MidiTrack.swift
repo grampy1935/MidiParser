@@ -66,14 +66,18 @@ extension MidiTrack {
     
     func getProperty<T>(_ property: SequenceTrackProperty, data: inout T) {
         var length = sizeof(T.self)
-        check(MusicTrackGetProperty(musicTrack, property.inPropertyID, &data, &length),
-              label: "[MusicTrackGetProperty] \(property)", level: .fatal)
+        _ = withUnsafeMutablePointer(to: &data) { data in
+            check(MusicTrackGetProperty(musicTrack, property.inPropertyID, data, &length),
+                  label: "[MusicTrackGetProperty] \(property)", level: .fatal)
+       }
     }
     
     func setProperty<T>(_ property: SequenceTrackProperty, data: inout T) {
         let length = sizeof(T.self)
-        check(MusicTrackSetProperty(musicTrack, property.inPropertyID, &data, length),
-              label: "[MusicTrackSetProperty] \(property)", level: .fatal)
+        _ = withUnsafeMutablePointer(to: &data) { data in
+            check(MusicTrackSetProperty(musicTrack, property.inPropertyID, data, length),
+                  label: "[MusicTrackSetProperty] \(property)", level: .fatal)
+        }
     }
     
     func add(metaEvent: MetaEventProtocol) {

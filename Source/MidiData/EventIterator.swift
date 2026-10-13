@@ -100,7 +100,12 @@ final class EventIterator {
     }
 }
 
-extension MIDINoteMessage: Equatable {
+//  Extension declares a conformance of imported type 'MIDINoteMessage' to imported protocol 'Equatable'; this will not behave correctly if the owners of 'AudioToolbox' introduce this conformance in the future
+//  に対する、
+//  https://stackoverflow.com/questions/78612277/xcode-16-warning-extension-declares-a-conformance-of-imported-type-this-wil
+//  の方法によるワーニング対策
+//
+extension MIDINoteMessage: @retroactive Equatable {
     public static func == (lhs: MIDINoteMessage, rhs: MIDINoteMessage) -> Bool {
         return lhs.channel == rhs.channel
             && lhs.duration == rhs.duration
