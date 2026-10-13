@@ -14,7 +14,8 @@ public final class MidiNoteTrack: MidiTrack {
     private var isReload = false
     private let beatsPerMinute: BeatsPerMinute
     private let ticksPerBeat: TicksPerBeat
-    
+    private var isBackwordSort = false
+
     let musicTrack: MusicTrack
     let iterator: EventIterator
     
@@ -24,7 +25,9 @@ public final class MidiNoteTrack: MidiTrack {
                 return
             }
             
-            notes.sort(by: { $0.timeStamp.inSeconds < $1.timeStamp.inSeconds })
+            if isBackwordSort == false {    //  backwordSortの実行時にはソートをしない
+                notes.sort(by: { $0.timeStamp.inSeconds < $1.timeStamp.inSeconds })
+            }
         }
     }
         
@@ -389,5 +392,39 @@ extension MidiNoteTrack: RandomAccessCollection {
 extension MidiNoteTrack: Equatable {
     public static func == (lhs: MidiNoteTrack, rhs: MidiNoteTrack) -> Bool {
         return lhs.musicTrack == rhs.musicTrack
+    }
+}
+
+//MARK: - Sort
+public extension MidiNoteTrack {
+        
+    //  duration.inTicks.valueの小さい順にソートする
+    //
+    func sortByDuration() {
+        isBackwordSort = true
+        defer {
+            isBackwordSort = false
+        }
+
+        let count = self.count
+        //print("count = \(count)")
+        //print("self[0].duration.inTicks.value = \(self[0].duration.inTicks.value)")
+        //print("self[count - 1].duration.inTicks.value = \(self[count - 1].duration.inTicks.value)")
+        let notes = self.notes(from: self[0].timeStamp.inSeconds, to: self[count - 1].timeStamp.inSeconds + 1)  //  toに最後のnoteが含まれるように+1している
+        let sortedNotes = quicksort(a: notes)
+        self.clearNotes()
+        self.add(notes: sortedNotes)
+    }
+        
+    //  クイックソート
+    //      https://note.com/dngri/n/n14e7e4dc1aa7
+    //
+    func quicksort(a: [MidiNote] ) -> [MidiNote] {
+        guard a.count > 1 else { return a }
+        let pivot = a[a.count/2]
+        let less = a.filter { $0.duration.inTicks.value < pivot.duration.inTicks.value }
+        let equal = a.filter { $0.duration.inTicks.value == pivot.duration.inTicks.value }
+        let greater = a.filter { $0.duration.inTicks.value > pivot.duration.inTicks.value }
+        return quicksort(a: less) + equal + quicksort(a: greater)
     }
 }

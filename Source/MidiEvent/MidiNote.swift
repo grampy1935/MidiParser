@@ -9,13 +9,13 @@
 import AudioToolbox
 import Foundation
     
-public struct MidiNote {
+public class MidiNote {
     
     private let regularTempoTimeStamp: MusicTimeStamp
     private let regularDuration: Float32
     
-    public let timeStamp: MidiTime
-    public let duration: MidiTime
+    public var timeStamp: MidiTime
+    public var duration: MidiTime
     public let note: UInt8
     public let velocity: UInt8
     public let channel: UInt8

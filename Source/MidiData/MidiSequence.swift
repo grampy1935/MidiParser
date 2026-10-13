@@ -109,7 +109,8 @@ extension MidiSequence {
         }
         
         let header = data.withUnsafeBytes {
-            UnsafeRawBufferPointer(start: $0, count: Int(sizeof(HeaderChunk.self))).load(as: HeaderChunk.self)
+            //UnsafeRawBufferPointer(start: $0, count: Int(sizeof(HeaderChunk.self))).load(as: HeaderChunk.self)
+            UnsafeRawBufferPointer(start: $0.baseAddress!, count: Int(sizeof(HeaderChunk.self))).load(as: HeaderChunk.self)
         }
       
         fileFormat = getFileFormat(fromHeader: header)

@@ -65,8 +65,8 @@ public struct BeatsPerMinute {
     }
 }
 
-public struct Ticks {
-    public let value: UInt
+public class Ticks {
+    public var value: UInt
     
     public init(_ value: UInt) {
         self.value = value
